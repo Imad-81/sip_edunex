@@ -10,15 +10,6 @@ EduNex is a high-fidelity career mapping engine designed specifically for the In
 
 ---
 
-## 📸 Visual Tour
-
-<div align="center">
-  <img src="public/readme/dashboard_mockup.png" alt="EduNex Dashboard Mockup" width="100%" />
-  <p><i>The EduNex Intelligence Dashboard: Real-time career rankings and compatibility metrics.</i></p>
-</div>
-
----
-
 ## ✨ Key Features
 
 - **🌐 Student Intelligence Profiling**: Builds a multi-factor profile using deep data points:
