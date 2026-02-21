@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EduNex 🚀
 
-## Getting Started
+**AI-Powered · India-Specific · Grades 9–College**
 
-First, run the development server:
+EduNex is a high-fidelity career mapping engine designed specifically for the Indian academic landscape. It moves beyond generic advice by using a structured **Student Intelligence System** to convert academic data, personal interests, and socio-economic context into ranked career blueprints.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **🌐 Student Intelligence Profiling**: Builds a multi-factor profile including:
+  - Academic Vector (Subjects & Performance)
+  - Interest Compatibility Matrix
+  - Socio-Economic Context & Accessibility
+  - Risk Appetite
+- **🤖 Ranked Career Engine**: Powered by advanced AI to return ranked career paths with compatibility scores, relevant entrance exams, and projected salary data.
+- **🗺️ Deep Blueprint Mode**: Provides year-by-year strategic plans, including exam intelligence, scholarship filters, and career risk maps.
+- **📊 Persistent Dashboard**: Store and update your profile, rankings, and progress milestones over time.
+- **🌍 Socially Aligned Design**: Directly tackles **SDG 4 (Quality Education)** and **SDG 10 (Reduced Inequality)** by bridging the information gap for rural and first-generation students.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ The Model: Weighted Compatibility Scoring
 
-To learn more about Next.js, take a look at the following resources:
+EduNex uses a precise weighting system to ensure accuracy:
+- **30%** - Subject Alignment
+- **25%** - Interest Alignment
+- **15%** - Risk Match
+- **15%** - Accessibility
+- **15%** - Market Growth
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 💻 Tech Stack
 
-## Deploy on Vercel
+- **Frontend**: [Next.js](https://nextjs.org/) (App Router)
+- **Backend / Database**: [Convex](https://www.convex.dev/)
+- **Authentication**: [Clerk](https://clerk.com/)
+- **AI Integration**: AI-powered career matching (Groq API)
+- **Styling**: Modern CSS with a focus on high-end aesthetics and responsiveness.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) or [Node.js](https://nodejs.org/)
+- [Convex](https://www.convex.dev/) account
+- [Clerk](https://clerk.com/) account
+- [Groq API](https://groq.com/) key
+
+### Installation
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/Imad-81/sip_edunex.git
+    cd sip_edunex
+    ```
+
+2.  **Install dependencies**:
+    ```bash
+    bun install
+    ```
+
+3.  **Set up environment variables**:
+    Create a `.env.local` file and add your credentials:
+    ```env
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=...
+    CLERK_SECRET_KEY=...
+    NEXT_PUBLIC_CONVEX_URL=...
+    GROQ_API_KEY=...
+    ```
+
+4.  **Start the development server**:
+    ```bash
+    bun run dev
+    ```
+
+5.  **Run Convex dev server**:
+    ```bash
+    bunx convex dev
+    ```
+
+---
+
+## 📄 License
+
+This project is private and proprietary. © 2025 EduNex.
