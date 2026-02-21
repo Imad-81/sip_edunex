@@ -99,6 +99,15 @@ EduNex isn't just a survey; it's a weighted analysis engine. Our **Compatibility
 
 ---
 
+## 🗺️ Roadmap
+
+- [ ] **AI-Powered Scholarship Matching**: Automated filtering of scholarships based on student intelligence profiles.
+- [ ] **College Predictor Engine**: Direct integration with entrance exam results to predict admissions.
+- [ ] **Mentorship Gateway**: Connecting students with professionals in their top-ranked career paths.
+- [ ] **Regional Language Support**: Expanding SIS to support Hindi, Telugu, and other major Indian languages.
+
+---
+
 ## 🎯 Our Mission
 
 To empower every Indian student, regardless of their zip code or family background, with the intelligence they need to navigate the hyper-competitive academic landscape and build a future they truly deserve.
