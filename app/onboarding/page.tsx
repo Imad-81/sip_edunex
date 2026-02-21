@@ -6,7 +6,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 
-const STEPS = ["Academic Profile", "Interest Mapping", "Context & Risk", "Review"];
+const STEPS = ["Basic Info", "Academic Profile", "Interest Mapping", "Context & Risk", "Review"];
 
 const INTEREST_CLUSTERS = [
     {
@@ -197,6 +197,7 @@ export default function OnboardingPage() {
     const [saving, setSaving] = useState(false);
 
     const [form, setForm] = useState({
+        preferredName: "",
         classLevel: "",
         stream: "",
         maths: 0,
@@ -234,35 +235,42 @@ export default function OnboardingPage() {
     const handleSubmit = async () => {
         if (!user) return;
         setSaving(true);
-        await saveProfile({
-            userId: user.id,
-            classLevel: form.classLevel,
-            stream: form.stream,
-            subjectScores: {
-                maths: Number(form.maths),
-                physics: Number(form.physics),
-                chemistry: Number(form.chemistry),
-                biology: Number(form.biology),
-                commerce: Number(form.commerce),
-                arts: Number(form.arts),
-            },
-            interestVector: {
-                analytical: Number(form.analytical),
-                creative: Number(form.creative),
-                social: Number(form.social),
-                business: Number(form.business),
-                technical: Number(form.technical),
-                research: Number(form.research),
-                publicService: Number(form.publicService),
-            },
-            socioEconomic: {
-                locationType: form.locationType as "urban" | "rural",
-                incomeBracket: form.incomeBracket,
-                firstGenCollege: form.firstGenCollege,
-            },
-            riskAppetite: form.riskAppetite as "safe" | "balanced" | "high",
-        });
-        router.push("/dashboard");
+        try {
+            await saveProfile({
+                userId: user.id,
+                preferredName: form.preferredName,
+                clerkName: user.fullName || user.username || "Anonymous",
+                classLevel: form.classLevel,
+                stream: form.stream,
+                subjectScores: {
+                    maths: Number(form.maths),
+                    physics: Number(form.physics),
+                    chemistry: Number(form.chemistry),
+                    biology: Number(form.biology),
+                    commerce: Number(form.commerce),
+                    arts: Number(form.arts),
+                },
+                interestVector: {
+                    analytical: Number(form.analytical),
+                    creative: Number(form.creative),
+                    social: Number(form.social),
+                    business: Number(form.business),
+                    technical: Number(form.technical),
+                    research: Number(form.research),
+                    publicService: Number(form.publicService),
+                },
+                socioEconomic: {
+                    locationType: form.locationType as "urban" | "rural",
+                    incomeBracket: form.incomeBracket,
+                    firstGenCollege: form.firstGenCollege,
+                },
+                riskAppetite: form.riskAppetite as "safe" | "balanced" | "high",
+            });
+            router.push("/dashboard");
+        } catch (error) {
+            console.error("Error saving profile:", error);
+            setSaving(false);
+        }
     };
 
     const canProceedStep0 = form.classLevel && form.stream;
@@ -380,9 +388,58 @@ export default function OnboardingPage() {
                         ))}
                     </div>
 
-                    {/* STEP 0: Academic Profile */}
+                    {/* STEP 0: Basic Info */}
                     {step === 0 && (
                         <div key="step0" style={{ animation: "fadeUp 0.4s ease both" }}>
+                            <h1
+                                className="headline"
+                                style={{ marginBottom: 8, fontSize: "1.875rem" }}
+                            >
+                                Nice to meet you!
+                            </h1>
+                            <p
+                                style={{
+                                    color: "var(--text-secondary)",
+                                    marginBottom: 36,
+                                    fontSize: "0.9375rem",
+                                }}
+                            >
+                                Let's start with your name.
+                            </p>
+
+                            <div style={{ display: "grid", gap: 16 }}>
+                                <div>
+                                    <label
+                                        style={{
+                                            display: "block",
+                                            fontSize: "0.875rem",
+                                            fontWeight: 500,
+                                            marginBottom: 8,
+                                            color: "var(--text-secondary)",
+                                        }}
+                                    >
+                                        What should we call you?
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="preferredName"
+                                        placeholder="Enter your name"
+                                        value={form.preferredName}
+                                        onChange={handleChange}
+                                        className="input"
+                                        autoFocus
+                                    />
+                                    <p style={{ marginTop: 8, fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
+                                        Signed in as: <span style={{ color: "var(--text-secondary)", fontWeight: 500 }}>{user?.fullName || user?.username || "..."}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 1: Academic Profile */}
+                    {step === 1 && (
+                        <div key="step1" style={{ animation: "fadeUp 0.4s ease both" }}>
                             <h1
                                 className="headline"
                                 style={{ marginBottom: 8, fontSize: "1.875rem" }}
@@ -507,9 +564,9 @@ export default function OnboardingPage() {
                         </div>
                     )}
 
-                    {/* STEP 1: Interest Mapping */}
-                    {step === 1 && (
-                        <div key="step1" style={{ animation: "fadeUp 0.4s ease both" }}>
+                    {/* STEP 2: Interest Mapping */}
+                    {step === 2 && (
+                        <div key="step2" style={{ animation: "fadeUp 0.4s ease both" }}>
                             <h1
                                 className="headline"
                                 style={{ marginBottom: 8, fontSize: "1.875rem" }}
@@ -541,9 +598,9 @@ export default function OnboardingPage() {
                         </div>
                     )}
 
-                    {/* STEP 2: Context & Risk */}
-                    {step === 2 && (
-                        <div key="step2" style={{ animation: "fadeUp 0.4s ease both" }}>
+                    {/* STEP 3: Context & Risk */}
+                    {step === 3 && (
+                        <div key="step3" style={{ animation: "fadeUp 0.4s ease both" }}>
                             <h1
                                 className="headline"
                                 style={{ marginBottom: 8, fontSize: "1.875rem" }}
@@ -745,9 +802,9 @@ export default function OnboardingPage() {
                         </div>
                     )}
 
-                    {/* STEP 3: Review */}
-                    {step === 3 && (
-                        <div key="step3" style={{ animation: "fadeUp 0.4s ease both" }}>
+                    {/* STEP 4: Review */}
+                    {step === 4 && (
+                        <div key="step4" style={{ animation: "fadeUp 0.4s ease both" }}>
                             <h1
                                 className="headline"
                                 style={{ marginBottom: 8, fontSize: "1.875rem" }}
@@ -770,6 +827,13 @@ export default function OnboardingPage() {
                                     className="card"
                                     style={{ padding: "20px 24px" }}
                                 >
+                                    <div style={{ display: "grid", gap: 12, marginBottom: 20 }}>
+                                        <div>
+                                            <div className="caption" style={{ color: "var(--text-tertiary)" }}>Preferred Name</div>
+                                            <div style={{ fontWeight: 600, fontSize: "1.125rem", marginTop: 2 }}>{form.preferredName || "—"}</div>
+                                        </div>
+                                    </div>
+
                                     <div style={{ fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--text-tertiary)", marginBottom: 14, textTransform: "uppercase" }}>
                                         Academic
                                     </div>
@@ -859,8 +923,8 @@ export default function OnboardingPage() {
                         {step < STEPS.length - 1 ? (
                             <button
                                 className="btn btn-primary"
-                                disabled={step === 0 && !canProceedStep0}
-                                style={{ opacity: step === 0 && !canProceedStep0 ? 0.4 : 1 }}
+                                disabled={(step === 0 && !form.preferredName) || (step === 1 && !canProceedStep0)}
+                                style={{ opacity: ((step === 0 && !form.preferredName) || (step === 1 && !canProceedStep0)) ? 0.4 : 1 }}
                                 onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
                             >
                                 Continue →

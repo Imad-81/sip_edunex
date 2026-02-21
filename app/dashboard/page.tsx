@@ -594,7 +594,7 @@ export default function DashboardPage() {
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-            {user?.firstName || "Student"}
+            {profile.preferredName || user?.firstName || "Student"}
           </span>
           <Link href="/onboarding" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "8px 14px" }}>
             Edit Profile
@@ -657,7 +657,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <div style={{ fontWeight: 600, fontSize: "0.9375rem", letterSpacing: "-0.01em" }}>
-                  {user?.firstName} {user?.lastName}
+                  {profile.preferredName || user?.fullName}
                 </div>
                 <div style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)", marginTop: 2 }}>
                   {profile.classLevel} · {profile.stream}
