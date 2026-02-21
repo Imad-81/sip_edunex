@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const STEPS = ["Basic Info", "Academic Profile", "Interest Mapping", "Context & Risk", "Review"];
@@ -189,10 +190,11 @@ function Slider({
     );
 }
 
-export default function OnboardingPage() {
+export default function ProfilePage() {
     const { user } = useUser();
     const router = useRouter();
     const saveProfile = useMutation(api.students.saveStudentProfile);
+    const profile = useQuery(api.students.getStudentProfile, user ? { userId: user.id } : "skip");
 
     const [step, setStep] = useState(0);
     const [saving, setSaving] = useState(false);
@@ -219,6 +221,33 @@ export default function OnboardingPage() {
         firstGenCollege: false,
         riskAppetite: "balanced",
     });
+
+    useEffect(() => {
+        if (profile) {
+            setForm({
+                preferredName: profile.preferredName || "",
+                classLevel: profile.classLevel || "",
+                stream: profile.stream || "",
+                maths: profile.subjectScores?.maths || 0,
+                physics: profile.subjectScores?.physics || 0,
+                chemistry: profile.subjectScores?.chemistry || 0,
+                biology: profile.subjectScores?.biology || 0,
+                commerce: profile.subjectScores?.commerce || 0,
+                arts: profile.subjectScores?.arts || 0,
+                analytical: profile.interestVector?.analytical || 5,
+                creative: profile.interestVector?.creative || 5,
+                social: profile.interestVector?.social || 5,
+                business: profile.interestVector?.business || 5,
+                technical: profile.interestVector?.technical || 5,
+                research: profile.interestVector?.research || 5,
+                publicService: profile.interestVector?.publicService || 5,
+                locationType: profile.socioEconomic?.locationType || "urban",
+                incomeBracket: profile.socioEconomic?.incomeBracket || "",
+                firstGenCollege: profile.socioEconomic?.firstGenCollege || false,
+                riskAppetite: profile.riskAppetite || "balanced",
+            });
+        }
+    }, [profile]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const target = e.target as HTMLInputElement;
@@ -276,6 +305,15 @@ export default function OnboardingPage() {
 
     const canProceedStep0 = form.classLevel && form.stream;
 
+    if (profile === undefined) {
+        return (
+            <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg)" }}>
+                <div style={{ width: 32, height: 32, border: "2px solid var(--border)", borderTopColor: "var(--text-primary)", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+        );
+    }
+
     return (
         <div
             style={{
@@ -287,24 +325,31 @@ export default function OnboardingPage() {
         >
             {/* Top bar */}
             <div
+                className="glass-nav"
                 style={{
-                    padding: "20px 32px",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 100,
+                    padding: "16px 32px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    borderBottom: "1px solid var(--border)",
-                    background: "var(--surface)",
                 }}
             >
-                <span
-                    style={{
-                        fontSize: "1rem",
-                        fontWeight: 600,
-                        letterSpacing: "-0.02em",
-                    }}
-                >
-                    EduNex
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <Link href="/dashboard" className="btn btn-ghost" style={{ padding: "6px 12px", fontSize: "0.875rem" }}>
+                        ← Back to Dashboard
+                    </Link>
+                    <span
+                        style={{
+                            fontSize: "1rem",
+                            fontWeight: 600,
+                            letterSpacing: "-0.02em",
+                        }}
+                    >
+                        Edit Profile
+                    </span>
+                </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                     <ThemeToggle variant="nav" />
                     <span
@@ -399,7 +444,7 @@ export default function OnboardingPage() {
                                 className="headline"
                                 style={{ marginBottom: 8, fontSize: "1.875rem" }}
                             >
-                                Nice to meet you!
+                                Your Profile
                             </h1>
                             <p
                                 style={{
@@ -408,7 +453,7 @@ export default function OnboardingPage() {
                                     fontSize: "0.9375rem",
                                 }}
                             >
-                                Let's start with your name.
+                                Update your details below.
                             </p>
 
                             <div style={{ display: "grid", gap: 16 }}>
@@ -955,7 +1000,7 @@ export default function OnboardingPage() {
                                         Saving...
                                     </>
                                 ) : (
-                                    "Build My Blueprint →"
+                                    "Save Profile →"
                                 )}
                             </button>
                         )}

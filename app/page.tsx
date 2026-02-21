@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const el = heroRef.current;
@@ -17,6 +20,7 @@ export default function Home() {
       el.style.setProperty("--ry", `${-x}deg`);
     };
     window.addEventListener("mousemove", handleMouseMove);
+    setMounted(true);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
@@ -24,6 +28,7 @@ export default function Home() {
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       {/* NAV */}
       <nav
+        className="glass-nav"
         style={{
           position: "fixed",
           top: 0,
@@ -35,10 +40,6 @@ export default function Home() {
           justifyContent: "space-between",
           padding: "0 40px",
           height: 60,
-          background: "rgba(250,250,250,0.82)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(232,232,237,0.6)",
         }}
       >
         <span
@@ -51,13 +52,16 @@ export default function Home() {
         >
           EduNex
         </span>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Link href="/sign-in" className="btn btn-ghost" style={{ fontSize: "0.875rem" }}>
-            Sign In
-          </Link>
-          <Link href="/sign-up" className="btn btn-primary" style={{ fontSize: "0.875rem", padding: "9px 20px" }}>
-            Get Started
-          </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <ThemeToggle variant="nav" />
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Link href="/sign-in" className="btn btn-ghost" style={{ fontSize: "0.875rem" }}>
+              Sign In
+            </Link>
+            <Link href="/sign-up" className="btn btn-primary" style={{ fontSize: "0.875rem", padding: "9px 20px" }}>
+              Get Started
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -90,7 +94,12 @@ export default function Home() {
           }}
         />
 
-        <div style={{ position: "relative", maxWidth: 840, animation: "fadeUp 0.8s ease both" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{ position: "relative", maxWidth: 840 }}
+        >
           {/* eyebrow */}
           <div
             style={{
@@ -106,6 +115,7 @@ export default function Home() {
               fontWeight: 500,
               color: "var(--text-secondary)",
               letterSpacing: "0.01em",
+              boxShadow: "var(--shadow-sm)",
             }}
           >
             <span
@@ -115,6 +125,7 @@ export default function Home() {
                 borderRadius: "50%",
                 background: "#34c759",
                 flexShrink: 0,
+                boxShadow: "0 0 8px #34c759",
               }}
             />
             AI-Powered · India-Specific · Grades 9–College
@@ -131,7 +142,7 @@ export default function Home() {
             <br />
             <span
               style={{
-                background: "linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%)",
+                background: "linear-gradient(135deg, var(--text-primary) 0%, var(--text-tertiary) 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -166,11 +177,17 @@ export default function Home() {
               Sign In
             </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* STATS */}
-      <section style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--surface)" }}>
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--surface)" }}
+      >
         <div
           className="container"
           style={{
@@ -209,7 +226,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* HOW IT WORKS */}
       <section style={{ padding: "100px 24px" }}>
@@ -256,21 +273,17 @@ export default function Home() {
                 icon: "◇",
               },
             ].map((step, i) => (
-              <div
+              <motion.div
                 key={i}
                 className="card"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                whileHover={{ y: -6, boxShadow: "var(--shadow-lg)" }}
                 style={{
                   padding: "32px 28px",
-                  transition: "transform 0.25s, box-shadow 0.25s",
                   cursor: "default",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
-                  (e.currentTarget as HTMLDivElement).style.boxShadow = "var(--shadow)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-                  (e.currentTarget as HTMLDivElement).style.boxShadow = "var(--shadow-sm)";
                 }}
               >
                 <div
@@ -301,21 +314,27 @@ export default function Home() {
                 <p className="body" style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
                   {step.body}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* SCORING */}
-      <section style={{ padding: "80px 24px", background: "var(--text-primary)" }}>
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        style={{ padding: "80px 24px", background: "var(--surface-raised)" }}
+      >
         <div className="container" style={{ textAlign: "center" }}>
-          <p className="caption" style={{ color: "#a1a1a6", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+          <p className="caption" style={{ color: "var(--text-tertiary)", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
             The Model
           </p>
           <h2
             className="headline"
-            style={{ color: "#fff", marginBottom: 48 }}
+            style={{ color: "var(--text-primary)", marginBottom: 48 }}
           >
             Weighted compatibility scoring.
           </h2>
@@ -335,38 +354,49 @@ export default function Home() {
               { factor: "Accessibility", weight: "15%" },
               { factor: "Market Growth", weight: "15%" },
             ].map((f, i) => (
-              <div
+              <motion.div
                 key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
                 style={{
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
                   borderRadius: 14,
                   padding: "24px 20px",
                   textAlign: "center",
+                  boxShadow: "var(--shadow-sm)",
                 }}
               >
                 <div
                   style={{
                     fontSize: "1.75rem",
                     fontWeight: 700,
-                    color: "#fff",
+                    color: "var(--text-primary)",
                     letterSpacing: "-0.03em",
                     marginBottom: 6,
                   }}
                 >
                   {f.weight}
                 </div>
-                <div style={{ fontSize: "0.8125rem", color: "#8e8e93" }}>
+                <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
                   {f.factor}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* SDG CALLOUT */}
-      <section style={{ padding: "80px 24px" }}>
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7 }}
+        style={{ padding: "100px 24px" }}
+      >
         <div
           className="container"
           style={{ maxWidth: 680, textAlign: "center" }}
@@ -415,13 +445,17 @@ export default function Home() {
             EduNex accounts for your real context — not an ideal one.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* CTA STRIP */}
-      <section
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
         style={{
           borderTop: "1px solid var(--border)",
-          padding: "80px 24px",
+          padding: "100px 24px",
           background: "var(--surface)",
           textAlign: "center",
         }}
@@ -435,7 +469,7 @@ export default function Home() {
         <Link href="/sign-up" className="btn btn-primary" style={{ padding: "16px 40px", fontSize: "1rem" }}>
           Start Free
         </Link>
-      </section>
+      </motion.section>
 
       {/* FOOTER */}
       <footer

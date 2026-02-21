@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface Career {
   rank: number;
@@ -150,7 +151,7 @@ function CareerCard({
             height: 32,
             borderRadius: 8,
             background: career.rank <= 3 ? "var(--text-primary)" : "var(--surface-raised)",
-            color: career.rank <= 3 ? "#fff" : "var(--text-tertiary)",
+            color: career.rank <= 3 ? "var(--bg)" : "var(--text-tertiary)",
             border: career.rank > 3 ? "1px solid var(--border)" : "none",
             display: "flex",
             alignItems: "center",
@@ -478,14 +479,45 @@ export default function DashboardPage() {
     api.students.getStudentProfile,
     user ? { userId: user.id } : "skip"
   );
+  const savedCareersDoc = useQuery(
+    api.careers.getCareers,
+    user ? { userId: user.id } : "skip"
+  );
+  const saveCareersToDb = useMutation(api.careers.saveCareers);
 
   const [careers, setCareers] = useState<Career[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("Analyzing Profile...");
   const [error, setError] = useState<string | null>(null);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!loading) return;
+    const messages = [
+      "Scanning academic vector...",
+      "Factoring socio-economic context...",
+      "Querying intelligence model...",
+      "Ranking compatibility matches...",
+      "Finalizing career blueprints..."
+    ];
+    let i = 0;
+    setLoadingMsg(messages[0]);
+    const timer = setInterval(() => {
+      i = (i + 1) % messages.length;
+      setLoadingMsg(messages[i]);
+    }, 2500);
+    return () => clearInterval(timer);
+  }, [loading]);
+
+  useEffect(() => {
+    if (savedCareersDoc?.careersData) {
+      setCareers(savedCareersDoc.careersData);
+    }
+  }, [savedCareersDoc]);
+
   const handleAnalyze = async () => {
     setLoading(true);
+    setLoadingMsg("Scanning academic vector...");
     setError(null);
     try {
       const res = await fetch("/api/generate-careers", {
@@ -499,6 +531,12 @@ export default function DashboardPage() {
       } else {
         setCareers(data.careers);
         setExpandedCard(1);
+        if (user?.id) {
+          await saveCareersToDb({
+            userId: user.id,
+            careersData: data.careers,
+          });
+        }
       }
     } catch {
       setError("Failed to reach the AI engine. Please try again.");
@@ -565,6 +603,7 @@ export default function DashboardPage() {
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", flexDirection: "column" }}>
       {/* Top Nav */}
       <nav
+        className="glass-nav"
         style={{
           position: "sticky",
           top: 0,
@@ -574,14 +613,10 @@ export default function DashboardPage() {
           justifyContent: "space-between",
           padding: "0 32px",
           height: 56,
-          background: "rgba(250,250,250,0.9)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          borderBottom: "1px solid var(--border)",
         }}
       >
         <Link
-          href="/"
+          href="/dashboard"
           style={{
             fontSize: "1rem",
             fontWeight: 600,
@@ -596,7 +631,8 @@ export default function DashboardPage() {
           <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
             {profile.preferredName || user?.firstName || "Student"}
           </span>
-          <Link href="/onboarding" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "8px 14px" }}>
+          <ThemeToggle variant="nav" />
+          <Link href="/profile" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "8px 14px" }}>
             Edit Profile
           </Link>
         </div>
@@ -644,7 +680,7 @@ export default function DashboardPage() {
                   height: 40,
                   borderRadius: "50%",
                   background: "var(--text-primary)",
-                  color: "#fff",
+                  color: "var(--bg)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -818,13 +854,11 @@ export default function DashboardPage() {
 
               {error && (
                 <div
+                  className="error-box"
                   style={{
                     marginBottom: 20,
                     padding: "12px 20px",
-                    background: "#fff5f5",
-                    border: "1px solid #fecaca",
                     borderRadius: "var(--radius-sm)",
-                    color: "#b91c1c",
                     fontSize: "0.875rem",
                     maxWidth: 420,
                   }}
@@ -846,13 +880,13 @@ export default function DashboardPage() {
                         display: "inline-block",
                         width: 16,
                         height: 16,
-                        border: "2px solid rgba(255,255,255,0.3)",
-                        borderTopColor: "#fff",
+                        border: "2px solid transparent",
+                        borderTopColor: "currentColor",
                         borderRadius: "50%",
                         animation: "spin 0.7s linear infinite",
                       }}
                     />
-                    Analyzing Profile...
+                    {loadingMsg}
                   </span>
                 ) : (
                   "Analyze My Careers →"
@@ -867,7 +901,7 @@ export default function DashboardPage() {
                     color: "var(--text-tertiary)",
                   }}
                 >
-                  Building your compatibility vector — this takes 10–15 seconds
+                  This usually takes 10–15 seconds
                 </p>
               )}
             </div>

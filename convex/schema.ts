@@ -46,4 +46,32 @@ export default defineSchema({
 
         createdAt: v.number(),
     }).index("by_user", ["userId"]),
+
+    careers: defineTable({
+        userId: v.string(),
+        careersData: v.array(
+            v.object({
+                rank: v.number(),
+                careerName: v.string(),
+                compatibilityScore: v.number(),
+                subjectAlignment: v.number(),
+                interestAlignment: v.number(),
+                riskMatch: v.number(),
+                accessibility: v.number(),
+                marketGrowth: v.number(),
+                whyItMatches: v.string(),
+                requiredStream: v.string(),
+                entranceExams: v.array(v.string()),
+                topCollegesIndia: v.array(v.string()),
+                skillsRequired: v.array(v.string()),
+                salaryRangeIndia: v.string(),
+                fiveYearOutlook: v.string(),
+                riskLevel: v.string(),
+                backupPathways: v.array(v.string()),
+                alternativeRoutes: v.string(),
+            })
+        ),
+        createdAt: v.number(),
+        updatedAt: v.number(),
+    }).index("by_user", ["userId"]),
 });
